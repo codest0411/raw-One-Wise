@@ -1,63 +1,64 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 
-/**
- * useSocket - connects to a Socket.IO server and provides helpers to emit and listen to events.
- *
- * Defaults to connecting to http://localhost:4000. You may pass a different URL when calling the hook.
- *
- * Example:
- * const { socket, connected, emit, on, off, once } = useSocket()
- * useEffect(() => {
- *   const unsubscribe = on('message', (msg) => console.log(msg))
- *   return unsubscribe
- * }, [on])
- */
+
 
 type AnyEventMap = Record<string, any>
 
 type Handler = (...args: any[]) => void
 
+type SocketEvent<T extends AnyEventMap> = Extract<keyof T, string> | string
+
 export type UseSocketReturn<T extends AnyEventMap = AnyEventMap> = {
   socket: Socket | null
   connected: boolean
-  emit: (event: keyof T | string, ...args: any[]) => void
-  on: (event: keyof T | string, handler: Handler) => (() => void)
-  off: (event: keyof T | string, handler?: Handler) => void
-  once: (event: keyof T | string, handler: Handler) => void
+  emit: (event: SocketEvent<T>, ...args: any[]) => void
+  on: (event: SocketEvent<T>, handler: Handler) => (() => void)
+  off: (event: SocketEvent<T>, handler?: Handler) => void
+  once: (event: SocketEvent<T>, handler: Handler) => void
 }
 
-export default function useSocket<T extends AnyEventMap = AnyEventMap>(url = 'http://localhost:4000'): UseSocketReturn<T> {
+export default function useSocket<T extends AnyEventMap = AnyEventMap>(url?: string): UseSocketReturn<T> {
   const socketRef = useRef<Socket | null>(null)
   const [connected, setConnected] = useState(false)
+  const targetUrl = url ?? process.env.NEXT_PUBLIC_SOCKET_URL ?? ''
 
   useEffect(() => {
+    if (!targetUrl) {
+      console.warn('No socket server URL configured. Set NEXT_PUBLIC_SOCKET_URL or pass a url to useSocket(). Skipping connection.')
+      return
+    }
+
     // Create socket connection
-    const socket = io(url, { autoConnect: true })
+    const socket = io(targetUrl, { autoConnect: true, transports: ['websocket'], reconnectionAttempts: 5 })
     socketRef.current = socket
 
     const handleConnect = () => setConnected(true)
     const handleDisconnect = () => setConnected(false)
+    const handleError = (err: Error) => {
+      console.error('Socket connect error', err)
+      setConnected(false)
+    }
 
     socket.on('connect', handleConnect)
     socket.on('disconnect', handleDisconnect)
-    socket.on('connect_error', (err) => console.error('Socket connect error', err))
+    socket.on('connect_error', handleError)
 
     // Cleanup on unmount
     return () => {
       socket.off('connect', handleConnect)
       socket.off('disconnect', handleDisconnect)
-      socket.off('connect_error')
+      socket.off('connect_error', handleError)
       socket.close()
       socketRef.current = null
     }
-  }, [url])
+  }, [targetUrl])
 
-  const emit = useCallback((event: string, ...args: any[]) => {
+  const emit = useCallback((event: SocketEvent<T>, ...args: any[]) => {
     socketRef.current?.emit(event, ...args)
   }, [])
 
-  const on = useCallback((event: string, handler: Handler) => {
+  const on = useCallback((event: SocketEvent<T>, handler: Handler) => {
     socketRef.current?.on(event, handler)
     // Return an unsubscribe function for convenience
     return () => {
@@ -65,12 +66,12 @@ export default function useSocket<T extends AnyEventMap = AnyEventMap>(url = 'ht
     }
   }, [])
 
-  const off = useCallback((event: string, handler?: Handler) => {
+  const off = useCallback((event: SocketEvent<T>, handler?: Handler) => {
     if (handler) socketRef.current?.off(event, handler)
     else socketRef.current?.removeAllListeners(event)
   }, [])
 
-  const once = useCallback((event: string, handler: Handler) => {
+  const once = useCallback((event: SocketEvent<T>, handler: Handler) => {
     socketRef.current?.once(event, handler)
   }, [])
 

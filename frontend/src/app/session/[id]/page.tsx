@@ -1,91 +1,277 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { usePathname, useParams } from 'next/navigation'
-import CodeEditor from '../../../components/editor/CodeEditor'
-import ChatPanel, { ChatMessage } from '../../../components/chat/ChatPanel'
-import VideoPanel from '../../../components/video/VideoPanel'
-import SessionHeader from '../../../components/session/SessionHeader'
-import useSocket from '../../../hooks/useSocket'
-import { Session } from '../../../types'
+import { useEffect, useRef, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import useAuth from '../../../hooks/useAuth'
+import SimpleCodeEditor from '../../../components/editor/SimpleCodeEditor'
+import { Mic, MicOff, Video, VideoOff, Phone, Copy, Check } from 'lucide-react'
 
-export default function SessionPage({ params }: { params: { id: string } }) {
-  const { id } = params
-  const [session] = useState<Session>({ id, title: `Session ${id}` })
-  const { socket, connected, emit, on, off } = useSocket()
+type Message = {
+  id: string
+  author: string
+  text: string
+  time: string
+}
 
-  const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [code, setCode] = useState<string>(`// Welcome to session ${id}\n\nfunction hello() {\n  console.log('Hello world')\n}`)
+export default function SessionPage() {
+  const params = useParams()
+  const router = useRouter()
+  const { user, loading } = useAuth()
+  const sessionId = params?.id as string
 
-  // Subscribe to chat messages
+  const [sessionTitle, setSessionTitle] = useState('')
+  const [code, setCode] = useState('// Start coding here...')
+  const [messages, setMessages] = useState<Message[]>([])
+  const [newMessage, setNewMessage] = useState('')
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true)
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true)
+  const [copied, setCopied] = useState(false)
+
+  const localVideoRef = useRef<HTMLVideoElement>(null)
+  const remoteVideoRef = useRef<HTMLVideoElement>(null)
+  const localStreamRef = useRef<MediaStream | null>(null)
+  const peerConnectionRef = useRef<RTCPeerConnection | null>(null)
+
   useEffect(() => {
-    const unsub = on('chat:message', (data: any) => {
-      const msg: ChatMessage = {
-        id: data.id ?? String(Date.now()),
-        author: data.author,
-        text: data.text,
-        time: data.time ?? new Date().toISOString(),
-        isOwn: false,
-      }
-      setMessages((m) => [...m, msg])
-    })
+    if (!loading && !user) {
+      router.replace('/auth/student/login')
+      return
+    }
 
-    const codeSub = on('code:update', (payload: any) => {
-      if (payload?.code) setCode(payload.code)
-    })
+    if (user) {
+      fetchSession()
+      initializeMedia()
+    }
 
     return () => {
-      unsub()
-      codeSub()
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks().forEach(track => track.stop())
+      }
+      if (peerConnectionRef.current) {
+        peerConnectionRef.current.close()
+      }
     }
-  }, [on])
+  }, [user, loading, sessionId])
 
-  const handleSendMessage = (text: string) => {
-    const payload = { id: String(Date.now()), text, time: new Date().toISOString() }
-    // Optimistic UI
-    setMessages((m) => [...m, { id: payload.id, text, time: payload.time, isOwn: true }])
-    emit('chat:message', payload)
+  const fetchSession = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sessions/${sessionId}`, {
+        headers: {
+          'Authorization': `Bearer ${user?.id}`,
+        },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setSessionTitle(data.data?.title || 'Session')
+      }
+    } catch (error) {
+      console.error('Failed to fetch session:', error)
+    }
   }
 
-  const handleCodeChange = (value?: string) => {
-    setCode(value ?? '')
-    emit('code:update', { code: value })
+  const initializeMedia = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      })
+      localStreamRef.current = stream
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream
+      }
+
+      const configuration = {
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+      }
+      peerConnectionRef.current = new RTCPeerConnection(configuration)
+
+      stream.getTracks().forEach(track => {
+        peerConnectionRef.current?.addTrack(track, stream)
+      })
+
+      peerConnectionRef.current.ontrack = (event) => {
+        if (remoteVideoRef.current && event.streams[0]) {
+          remoteVideoRef.current.srcObject = event.streams[0]
+        }
+      }
+    } catch (error) {
+      console.error('Failed to initialize media:', error)
+    }
+  }
+
+  const toggleAudio = () => {
+    if (localStreamRef.current) {
+      const audioTrack = localStreamRef.current.getAudioTracks()[0]
+      if (audioTrack) {
+        audioTrack.enabled = !audioTrack.enabled
+        setIsAudioEnabled(audioTrack.enabled)
+      }
+    }
+  }
+
+  const toggleVideo = () => {
+    if (localStreamRef.current) {
+      const videoTrack = localStreamRef.current.getVideoTracks()[0]
+      if (videoTrack) {
+        videoTrack.enabled = !videoTrack.enabled
+        setIsVideoEnabled(videoTrack.enabled)
+      }
+    }
+  }
+
+  const endCall = () => {
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach(track => track.stop())
+    }
+    if (peerConnectionRef.current) {
+      peerConnectionRef.current.close()
+    }
+    router.back()
+  }
+
+  const handleCodeChange = (value: string | undefined) => {
+    if (value !== undefined) {
+      setCode(value)
+    }
+  }
+
+  const sendMessage = () => {
+    if (!newMessage.trim()) return
+
+    const message: Message = {
+      id: Date.now().toString(),
+      author: user?.name || user?.email || 'You',
+      text: newMessage,
+      time: new Date().toLocaleTimeString(),
+    }
+
+    setMessages([...messages, message])
+    setNewMessage('')
+  }
+
+  const copySessionLink = () => {
+    const link = `${window.location.origin}/session/${sessionId}`
+    navigator.clipboard.writeText(link)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <p className="text-white">Loading session...</p>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      <div className="max-w-7xl mx-auto">
-        <SessionHeader session={session} />
+    <div className="h-screen bg-gray-900 flex flex-col">
+      <div className="bg-gray-800 border-b border-gray-700 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-white">{sessionTitle}</h1>
+            <p className="text-sm text-gray-400">Session ID: {sessionId}</p>
+          </div>
+          <button
+            onClick={copySessionLink}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+          >
+            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+            {copied ? 'Copied!' : 'Copy Link'}
+          </button>
+        </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 flex flex-col gap-4">
-            <div className="rounded-md overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
-              <CodeEditor initialCode={code} language="javascript" onChange={handleCodeChange} height={480} />
+      <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex flex-col">
+          <div className="flex-1 bg-gray-900">
+            <SimpleCodeEditor
+              value={code}
+              onChange={handleCodeChange}
+              language="javascript"
+            />
+          </div>
+        </div>
+
+        <div className="w-96 bg-gray-800 flex flex-col">
+          <div className="p-4 space-y-4">
+            <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+              <video
+                ref={remoteVideoRef}
+                autoPlay
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-2 right-2 w-32 h-24 bg-gray-900 rounded-lg overflow-hidden border-2 border-gray-700">
+                <video
+                  ref={localVideoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
 
-            <div className="rounded-md overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">Notes</h3>
-              <textarea className="w-full min-h-[120px] px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" placeholder="Shared notes..." />
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={toggleAudio}
+                className={`p-3 rounded-full transition-colors ${
+                  isAudioEnabled ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-700'
+                }`}
+              >
+                {isAudioEnabled ? <Mic className="w-5 h-5 text-white" /> : <MicOff className="w-5 h-5 text-white" />}
+              </button>
+              <button
+                onClick={toggleVideo}
+                className={`p-3 rounded-full transition-colors ${
+                  isVideoEnabled ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-700'
+                }`}
+              >
+                {isVideoEnabled ? <Video className="w-5 h-5 text-white" /> : <VideoOff className="w-5 h-5 text-white" />}
+              </button>
+              <button
+                onClick={endCall}
+                className="p-3 rounded-full bg-red-600 hover:bg-red-700 transition-colors"
+              >
+                <Phone className="w-5 h-5 text-white" />
+              </button>
             </div>
           </div>
 
-          <aside className="flex flex-col gap-4">
-            <div className="rounded-md overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 h-[340px]">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">Video</h3>
-              <VideoPanel />
+          <div className="flex-1 flex flex-col border-t border-gray-700">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {messages.map((msg) => (
+                <div key={msg.id} className="bg-gray-700 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-semibold text-white">{msg.author}</span>
+                    <span className="text-xs text-gray-400">{msg.time}</span>
+                  </div>
+                  <p className="text-sm text-gray-200">{msg.text}</p>
+                </div>
+              ))}
             </div>
 
-            <div className="rounded-md overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 h-[360px] flex flex-col">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">Chat</h3>
-              <div className="flex-1 overflow-hidden">
-                <ChatPanel messages={messages} onSendMessage={handleSendMessage} />
+            <div className="p-4 border-t border-gray-700">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                  placeholder="Type a message..."
+                  className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={sendMessage}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Send
+                </button>
               </div>
             </div>
-          </aside>
+          </div>
         </div>
-
-        <div className="mt-6 text-sm text-gray-500">Socket status: {connected ? 'connected' : 'disconnected'}</div>
       </div>
     </div>
   )
