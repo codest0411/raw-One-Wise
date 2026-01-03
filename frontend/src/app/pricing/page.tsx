@@ -41,7 +41,7 @@ export default function PricingPage() {
               </Link>
               <Link 
                 href="/#get-started" 
-                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full font-semibold hover:from-purple-700 hover:to-blue-700 transition"
+                className="px-6 py-2 bg-linear-to-r from-purple-600 to-blue-600 rounded-full font-semibold hover:from-purple-700 hover:to-blue-700 transition"
               >
                 Get Started
               </Link>
@@ -58,7 +58,7 @@ export default function PricingPage() {
       <section className="relative pt-32 pb-20 px-6">
         <div className="max-w-7xl mx-auto text-center">
           <div data-aos="fade-up">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-linear-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
               Simple, Transparent Pricing
             </h1>
             <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto mb-8">
@@ -70,7 +70,7 @@ export default function PricingPage() {
           <div className="flex items-center justify-center space-x-4 mb-16" data-aos="fade-up" data-aos-delay="100">
             <span className="text-white/70">Monthly</span>
             <button className="relative w-16 h-8 bg-white/10 rounded-full border border-white/20">
-              <div className="absolute left-1 top-1 w-6 h-6 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-transform"></div>
+              <div className="absolute left-1 top-1 w-6 h-6 bg-linear-to-r from-purple-500 to-blue-500 rounded-full transition-transform"></div>
             </button>
             <span className="text-white">
               Yearly <span className="text-green-400 text-sm font-semibold ml-1">(Save 20%)</span>
@@ -103,44 +103,44 @@ export default function PricingPage() {
               </Link>
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">Up to 3 sessions per month</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">30-minute session duration</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">Basic video quality (720p)</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">Code collaboration</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">Real-time chat</span>
                 </div>
                 <div className="flex items-start">
-                  <X className="w-5 h-5 text-white/30 mr-3 mt-0.5 flex-shrink-0" />
+                  <X className="w-5 h-5 text-white/30 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/40">Session recording</span>
                 </div>
                 <div className="flex items-start">
-                  <X className="w-5 h-5 text-white/30 mr-3 mt-0.5 flex-shrink-0" />
+                  <X className="w-5 h-5 text-white/30 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/40">Priority support</span>
                 </div>
                 <div className="flex items-start">
-                  <X className="w-5 h-5 text-white/30 mr-3 mt-0.5 flex-shrink-0" />
+                  <X className="w-5 h-5 text-white/30 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/40">Advanced analytics</span>
                 </div>
               </div>
             </div>
 
             {/* Pro Plan - Featured */}
-            <div className="bg-gradient-to-b from-purple-500/20 to-blue-500/20 backdrop-blur-lg rounded-2xl p-8 border-2 border-purple-500/50 relative hover:border-purple-400 transition-all transform md:scale-105" data-aos="fade-up" data-aos-delay="200">
+            <div className="bg-linear-to-b from-purple-500/20 to-blue-500/20 backdrop-blur-lg rounded-2xl p-8 border-2 border-purple-500/50 relative hover:border-purple-400 transition-all transform md:scale-105" data-aos="fade-up" data-aos-delay="200">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                <span className="bg-linear-to-r from-purple-600 to-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
                   Most Popular
                 </span>
               </div>
@@ -157,45 +157,45 @@ export default function PricingPage() {
               </div>
               <Link 
                 href="/auth/student/signup"
-                className="block w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all text-center mb-8"
+                className="block w-full px-6 py-3 bg-linear-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all text-center mb-8"
               >
                 Start Free Trial
               </Link>
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/90">Unlimited sessions</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/90">Unlimited session duration</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/90">HD video quality (1080p)</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/90">Advanced code collaboration</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/90">Real-time chat with file sharing</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/90">Session recording & playback</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/90">Priority support</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/90">Progress analytics</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/90">Screen sharing</span>
                 </div>
               </div>
@@ -215,45 +215,45 @@ export default function PricingPage() {
               </div>
               <Link 
                 href="#contact"
-                className="block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all text-center mb-8"
+                className="block w-full px-6 py-3 bg-linear-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all text-center mb-8"
               >
                 Contact Sales
               </Link>
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">Everything in Pro</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">Unlimited team members</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">4K video quality</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">Custom branding</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">Advanced security & compliance</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">Dedicated account manager</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">24/7 premium support</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">Custom integrations</span>
                 </div>
                 <div className="flex items-start">
-                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-green-400 mr-3 mt-0.5 shrink-0" />
                   <span className="text-white/70">SLA guarantee</span>
                 </div>
               </div>
@@ -266,7 +266,7 @@ export default function PricingPage() {
       <section className="relative py-20 px-6 bg-white/5">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16" data-aos="fade-up">
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            <h2 className="text-4xl font-bold mb-4 bg-linear-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
               Frequently Asked Questions
             </h2>
             <p className="text-white/70">Everything you need to know about our pricing</p>
@@ -304,7 +304,7 @@ export default function PricingPage() {
       {/* CTA Section */}
       <section className="relative py-20 px-6">
         <div className="max-w-4xl mx-auto text-center" data-aos="fade-up">
-          <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+          <h2 className="text-4xl font-bold mb-6 bg-linear-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
             Still Have Questions?
           </h2>
           <p className="text-xl text-white/70 mb-8">
@@ -313,7 +313,7 @@ export default function PricingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               href="#contact"
-              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full font-semibold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all"
+              className="px-8 py-4 bg-linear-to-r from-purple-600 to-indigo-600 rounded-full font-semibold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all"
             >
               Contact Sales
             </Link>
@@ -333,10 +333,10 @@ export default function PricingPage() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <Link href="/" className="flex items-center space-x-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-xl">OW</span>
                 </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-linear-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                   OneWise
                 </span>
               </Link>
