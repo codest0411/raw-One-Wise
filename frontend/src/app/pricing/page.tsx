@@ -34,6 +34,7 @@ export default function PricingPage() {
               <Link href="/#how-it-works" className="text-white/70 hover:text-white transition">How It Works</Link>
               <Link href="/#testimonials" className="text-white/70 hover:text-white transition">Testimonials</Link>
               <Link href="/pricing" className="text-white transition">Pricing</Link>
+              <Link href="/contact" className="text-white/70 hover:text-white transition">Contact</Link>
             </div>
             <div className="flex items-center space-x-4">
               <Link href="/auth/student/login" className="text-white/70 hover:text-white transition">
@@ -214,7 +215,7 @@ export default function PricingPage() {
                 <p className="text-white/60 text-sm mt-1">Contact us for pricing</p>
               </div>
               <Link 
-                href="#contact"
+                href="/contact"
                 className="block w-full px-6 py-3 bg-linear-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all text-center mb-8"
               >
                 Contact Sales

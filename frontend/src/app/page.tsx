@@ -33,6 +33,7 @@ export default function Home() {
               <a href="#how-it-works" className="text-white/70 hover:text-white transition">How It Works</a>
               <a href="#testimonials" className="text-white/70 hover:text-white transition">Testimonials</a>
               <Link href="/pricing" className="text-white/70 hover:text-white transition">Pricing</Link>
+              <Link href="/contact" className="text-white/70 hover:text-white transition">Contact</Link>
             </div>
             <div className="flex items-center space-x-4">
               <Link href="/auth/student/login" className="text-white/70 hover:text-white transition">
@@ -369,7 +370,7 @@ export default function Home() {
                 <li><a href="#" className="hover:text-white transition">About Us</a></li>
                 <li><a href="#" className="hover:text-white transition">Careers</a></li>
                 <li><a href="#" className="hover:text-white transition">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition">Contact</a></li>
+                <li><Link href="/contact" className="hover:text-white transition">Contact</Link></li>
               </ul>
             </div>
 
